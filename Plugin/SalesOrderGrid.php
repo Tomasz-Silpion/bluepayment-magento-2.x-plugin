@@ -18,6 +18,10 @@ class SalesOrderGrid
             $paymentTable = $subject->getResource()->getTable('sales_order_payment');
             $gatewayTable = $subject->getResource()->getTable('blue_gateways');
 
+            if ($subject->getConnection()->getServerVersion() < 5.7) {
+                return null;
+            }
+
             $subject->getSelect()
                 ->joinLeft(
                     $paymentTable,

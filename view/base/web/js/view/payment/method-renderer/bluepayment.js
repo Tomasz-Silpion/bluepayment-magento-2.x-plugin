@@ -113,7 +113,9 @@ define([
                     // window.location.href = redirectUrl;
                 };
 
-                this.initGPay();
+                if (typeof google.payments !== 'undefined') {
+                    this.initGPay();
+                }
             },
             defaults: {
                 template: 'BlueMedia_BluePayment/payment/bluepayment',
