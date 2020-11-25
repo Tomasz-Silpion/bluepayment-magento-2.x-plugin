@@ -18,7 +18,7 @@ class SalesOrderGrid
             $paymentTable = $subject->getResource()->getTable('sales_order_payment');
             $gatewayTable = $subject->getResource()->getTable('blue_gateways');
 
-            if ($subject->getConnection()->getServerVersion() < 5.7) {
+            if (version_compare($subject->getConnection()->getServerVersion(), '5.7.8', '<') === true) {
                 return null;
             }
 

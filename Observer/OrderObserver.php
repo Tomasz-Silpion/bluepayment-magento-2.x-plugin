@@ -20,20 +20,24 @@ class OrderObserver implements ObserverInterface
 
     public function execute(Observer $observer)
     {
-        /** @var DataObject $transport */
-        $transport = $observer->getEvent()->getTransportObject();
-        /** @var Order $order */
-        $order = $transport->getData('order');
-        /** @var Order\Payment $payment */
-        $payment = $order->getPayment();
+        /** @var DataObject $transportObject */
+        $transportObject = $observer->getEvent()->getTransportObject();
 
-        $gatewayId = $payment->getAdditionalInformation('bluepayment_gateway');
+        if ($transportObject && $transportObject->getData('order')) {
+            /** @var Order $order */
+            $order = $transportObject->getData('order');
+            /** @var Order\Payment $payment */
+            $payment = $order->getPayment();
+            if ($payment && $payment->getAdditionalInformation('bluepayment_gateway')) {
+                $gatewayId = $payment->getAdditionalInformation('bluepayment_gateway');
 
-        $gateway = $this->gatewayCollection
-            ->addFieldToFilter('gateway_id', $gatewayId)
-            ->addFieldToFilter('gateway_currency', $order->getOrderCurrencyCode())
-            ->getFirstItem();
+                $gateway = $this->gatewayCollection
+                    ->addFieldToFilter('gateway_id', $gatewayId)
+                    ->addFieldToFilter('gateway_currency', $order->getOrderCurrencyCode())
+                    ->getFirstItem();
 
-        $transport->setData('payment_channel', $gateway->getData('gateway_name'));
+                $transportObject->setData('payment_channel', $gateway->getData('gateway_name'));
+            }
+        }
     }
 }
