@@ -6,9 +6,7 @@ use BlueMedia\BluePayment\Block\Adminhtml\Gateways\Edit\Tab\Info as InfoTab;
 use Magento\Backend\Block\Widget\Tabs as WidgetTabs;
 
 /**
- * Class Tabs
- *
- * @package BlueMedia\BluePayment\Block\Adminhtml\Gateways\Edit
+ * Edit gateway tabs
  */
 class Tabs extends WidgetTabs
 {
@@ -22,7 +20,7 @@ class Tabs extends WidgetTabs
         parent::_construct();
         $this->setId('gateways_edit_tabs');
         $this->setDestElementId('edit_form');
-        $this->setTitle(__('Gateways Information'));
+        $this->setTitle(__('Ustawienia'));
     }
 
     /**

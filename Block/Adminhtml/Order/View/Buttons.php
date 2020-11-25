@@ -9,6 +9,7 @@ use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Widget\Button;
 use Magento\Backend\Block\Widget\Context;
 use Magento\Framework\Registry;
+use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Sales\Block\Adminhtml\Order\View;
 use Magento\Sales\Helper\Reorder;
 use Magento\Sales\Model\Config;
@@ -16,37 +17,36 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
 
 /**
- * Class Buttons
- * @package BlueMedia\BluePayment\Block\Adminhtml\Order\View
+ * Order details buttons block
  */
 class Buttons extends View
 {
     /**
-     * @var \Magento\Sales\Model\OrderFactory
+     * @var OrderFactory
      */
     private $orderFactory;
 
     /**
-     * @var \BlueMedia\BluePayment\Api\TransactionRepositoryInterface
+     * @var TransactionRepositoryInterface
      */
     private $transactionRepository;
 
     /**
-     * @var \BlueMedia\BluePayment\Api\RefundTransactionRepositoryInterface
+     * @var RefundTransactionRepositoryInterface
      */
     private $refundTransactionRepository;
 
     /**
      * Buttons constructor.
      *
-     * @param \Magento\Backend\Block\Widget\Context                           $context
-     * @param \Magento\Framework\Registry                                     $registry
-     * @param \Magento\Sales\Model\Config                                     $salesConfig
-     * @param \Magento\Sales\Helper\Reorder                                   $reorderHelper
-     * @param \Magento\Sales\Model\OrderFactory                               $orderFactory
-     * @param \BlueMedia\BluePayment\Api\TransactionRepositoryInterface       $transactionRepository
-     * @param \BlueMedia\BluePayment\Api\RefundTransactionRepositoryInterface $refundTransactionRepository
-     * @param array                                                           $data
+     * @param Context $context
+     * @param Registry $registry
+     * @param Config $salesConfig
+     * @param Reorder $reorderHelper
+     * @param OrderFactory $orderFactory
+     * @param TransactionRepositoryInterface $transactionRepository
+     * @param RefundTransactionRepositoryInterface $refundTransactionRepository
+     * @param array $data
      */
     public function __construct(
         Context $context,
@@ -72,8 +72,11 @@ class Buttons extends View
     public function addButtons()
     {
         if ($this->isCreateButtonRequired()) {
-            $this->getToolbar()->addChild('bluemedia_return', Button::class, [
-                'label' => __('Return BM'),
+            /** @var AbstractBlock $toolbar */
+            $toolbar = $this->getToolbar();
+
+            $toolbar->addChild('bluemedia_return', Button::class, [
+                'label' => __('Refund BM'),
                 'onclick' => 'BlueMedia.BluePayment.showPopup();'
             ]);
         }
@@ -86,8 +89,9 @@ class Buttons extends View
      *
      * @return boolean
      */
-    protected function isCreateButtonRequired()
+    public function isCreateButtonRequired()
     {
+        /** @var Popup $parentBlock */
         $parentBlock = $this->getParentBlock();
 
         return $parentBlock instanceof Template
@@ -96,11 +100,11 @@ class Buttons extends View
     }
 
     /**
-     * @param $orderId
+     * @param int|bool $orderId
      *
      * @return bool
      */
-    protected function canShowButton($orderId): bool
+    public function canShowButton($orderId)
     {
         /** @var Order $order */
         $order = $this->orderFactory->create()->load((int)$orderId);
@@ -112,11 +116,11 @@ class Buttons extends View
     }
 
     /**
-     * @param $order
+     * @param Order $order
      *
      * @return bool
      */
-    protected function hasOrderFullRefund($order): bool
+    public function hasOrderFullRefund($order)
     {
         $paymentTransaction = $this->transactionRepository->getSuccessTransactionFromOrder($order);
         $summaryRefund = $this->refundTransactionRepository->getTotalRefundAmountOnTransaction($paymentTransaction);
@@ -127,5 +131,4 @@ class Buttons extends View
 
         return false;
     }
-
 }

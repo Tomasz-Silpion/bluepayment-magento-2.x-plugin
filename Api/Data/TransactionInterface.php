@@ -4,7 +4,6 @@ namespace BlueMedia\BluePayment\Api\Data;
 
 /**
  * Interface TransactionInterface
- * @package BlueMedia\BluePayment\Api\Data
  */
 interface TransactionInterface
 {
@@ -35,62 +34,62 @@ interface TransactionInterface
     /**
      * @return string
      */
-    public function getOrderId(): string;
+    public function getOrderId();
 
     /**
      * @param string $orderId
      *
      * @return $this
      */
-    public function setOrderId(string $orderId);
+    public function setOrderId($orderId);
 
     /**
      * @return string
      */
-    public function getRemoteId(): string;
+    public function getRemoteId();
 
     /**
      * @param string $remoteId
      *
      * @return $this
      */
-    public function setRemoteId(string $remoteId);
+    public function setRemoteId($remoteId);
 
     /**
      * @return float
      */
-    public function getAmount(): float;
+    public function getAmount();
 
     /**
      * @param float $amount
      *
      * @return $this
      */
-    public function setAmount(float $amount);
+    public function setAmount($amount);
 
     /**
      * @return string
      */
-    public function getCurrency(): string;
+    public function getCurrency();
 
     /**
      * @param string $currency
      *
      * @return $this
      */
-    public function setCurrency(string $currency);
+    public function setCurrency($currency);
 
     /**
      * @return int
      */
-    public function getGatewayId(): int;
+    public function getGatewayId();
 
     /**
      * @param int $gatewayId
      *
      * @return $this
      */
-    public function setGatewayId(int $gatewayId);
+    public function setGatewayId($gatewayId);
 
     /**
      * @return string
@@ -98,7 +97,7 @@ interface TransactionInterface
     public function getPaymentDate();
 
     /**
-     * @param $date
+     * @param string $date
      *
      * @return $this
      */
@@ -107,25 +106,38 @@ interface TransactionInterface
     /**
      * @return string
      */
-    public function getPaymentStatus(): string;
+    public function getPaymentStatus();
 
     /**
      * @param string $status
      *
      * @return $this
      */
-    public function setPaymentStatus(string $status);
+    public function setPaymentStatus($status);
 
     /**
      * @return string
      */
-    public function getPaymentStatusDetails(): string;
+    public function getPaymentStatusDetails();
 
     /**
      * @param string $status
      *
      * @return $this
      */
-    public function setPaymentStatusDetails(string $status);
+    public function setPaymentStatusDetails($status);
 
+    /**
+     * Save object data
+     *
+     * @return $this
+     */
+    public function save();
+
+    /**
+     * Delete object from database
+     *
+     * @return $this
+     */
+    public function delete();
 }

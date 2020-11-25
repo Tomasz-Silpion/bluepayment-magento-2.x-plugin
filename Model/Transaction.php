@@ -5,6 +5,8 @@ namespace BlueMedia\BluePayment\Model;
 use BlueMedia\BluePayment\Api\Client;
 use BlueMedia\BluePayment\Api\Data\TransactionInterface;
 use BlueMedia\BluePayment\Model\ResourceModel\Transaction as TransactionResource;
+use DateTime;
+use DateTimeZone;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
@@ -13,15 +15,8 @@ use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
-/**
- * Class Transaction
- * @package BlueMedia\BluePayment\Model
- */
 class Transaction extends AbstractModel implements TransactionInterface, IdentityInterface
 {
-    /**
-     *
-     */
     const CACHE_TAG = 'blue_transaction';
 
     /**
@@ -35,15 +30,13 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface    $timezone
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
-     * @param array                                                   $data
      */
     public function __construct(
         Context $context,
         Registry $registry,
         TimezoneInterface $timezone,
         AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
-        array $data = []
+        AbstractDb $resourceCollection = null
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection);
         $this->timezone = $timezone;
@@ -68,7 +61,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function getOrderId(): string
+    public function getOrderId()
     {
         return $this->_getData(TransactionInterface::ORDER_ID);
     }
@@ -76,7 +69,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function setOrderId(string $orderId)
+    public function setOrderId($orderId)
     {
         return $this->setData(TransactionInterface::ORDER_ID, $orderId);
     }
@@ -84,7 +77,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function getRemoteId(): string
+    public function getRemoteId()
     {
         return $this->_getData(TransactionInterface::REMOTE_ID);
     }
@@ -92,7 +85,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function setRemoteId(string $remoteId)
+    public function setRemoteId($remoteId)
     {
         return $this->setData(TransactionInterface::REMOTE_ID, $remoteId);
     }
@@ -100,7 +93,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function getAmount(): float
+    public function getAmount()
     {
         return $this->_getData(TransactionInterface::AMOUNT);
     }
@@ -108,7 +101,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function setAmount(float $amount)
+    public function setAmount($amount)
     {
         return $this->setData(TransactionInterface::AMOUNT, $amount);
     }
@@ -116,7 +109,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function getCurrency(): string
+    public function getCurrency()
     {
         return $this->_getData(TransactionInterface::CURRENCY);
     }
@@ -124,7 +117,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function setCurrency(string $currency)
+    public function setCurrency($currency)
     {
         return $this->setData(TransactionInterface::CURRENCY, $currency);
     }
@@ -132,7 +125,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function getGatewayId(): int
+    public function getGatewayId()
     {
         return $this->_getData(TransactionInterface::GATEWAY_ID);
     }
@@ -140,7 +133,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function setGatewayId(int $gatewayId)
+    public function setGatewayId($gatewayId)
     {
         return $this->setData(TransactionInterface::GATEWAY_ID, $gatewayId);
     }
@@ -158,7 +151,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
      */
     public function setPaymentDate($date)
     {
-        $dateTime = $this->timezone->date(new \DateTime($date, new \DateTimeZone(Client::RESPONSE_TIMEZONE)));
+        $dateTime = $this->timezone->date(new DateTime($date, new DateTimeZone(Client::RESPONSE_TIMEZONE)));
 
         return $this->setData(TransactionInterface::PAYMENT_DATE, $dateTime->getTimestamp());
     }
@@ -166,7 +159,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function getPaymentStatus(): string
+    public function getPaymentStatus()
     {
         return $this->_getData(TransactionInterface::PAYMENT_STATUS);
     }
@@ -174,7 +167,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function setPaymentStatus(string $status)
+    public function setPaymentStatus($status)
     {
         return $this->setData(TransactionInterface::PAYMENT_STATUS, $status);
     }
@@ -182,7 +175,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function getPaymentStatusDetails(): string
+    public function getPaymentStatusDetails()
     {
         return $this->_getData(TransactionInterface::PAYMENT_STATUS_DETAILS);
     }
@@ -190,7 +183,7 @@ class Transaction extends AbstractModel implements TransactionInterface, Identit
     /**
      * {@inheritdoc}
      */
-    public function setPaymentStatusDetails(string $status)
+    public function setPaymentStatusDetails($status)
     {
         return $this->setData(TransactionInterface::PAYMENT_STATUS_DETAILS, $status);
     }

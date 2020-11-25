@@ -15,96 +15,150 @@
                 </field>
                 <field id="status_waiting_payment" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Status waiting payment</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <source_model>BlueMedia\BluePayment\Model\Config\Order\Status</source_model>
                 </field>
                 <field id="status_accept_payment" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Status accept payment</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <source_model>BlueMedia\BluePayment\Model\Config\Order\Status</source_model>
                 </field>
                 <field id="status_error_payment" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Status error payment</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <source_model>BlueMedia\BluePayment\Model\Config\Order\Status</source_model>
                 </field>
                 <field id="status_full_refund" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Status full refund</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <source_model>BlueMedia\BluePayment\Model\Config\Order\Status</source_model>
                 </field>
                 <field id="status_partial_refund" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Status partial refund</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <source_model>BlueMedia\BluePayment\Model\Config\Order\Status</source_model>
                 </field>
-                <field id="transaction_life_hours" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="unchangeable_statuses" translate="label" type="multiselect" sortOrder="91" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Unchangeable statuses</label>
+                    <source_model>BlueMedia\BluePayment\Model\Config\Order\Status</source_model>
+                    <comment><![CDATA[Orders with this statuses won't have an automatic status change.]]></comment>
+                </field>
+                <field id="transaction_life_hours" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Transaction Life Hours</label>
                 </field>
                 <field id="sort_order" translate="label" type="text" sortOrder="121" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
                 </field>
-                <field id="title" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="title" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Title</label>
                 </field>
-                <field id="disabled_gateways_notification_active" translate="label comment" type="select" sortOrder="500" showInDefault="1">
+                <field id="disabled_gateways_notification_active" translate="label comment" type="select" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled disabled gateways notification</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="disabled_gateways_notification_sender_name" translate="label comment" type="text" sortOrder="510" showInDefault="1">
+                <field id="disabled_gateways_notification_sender_name" translate="label comment" type="text" sortOrder="510" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Disabled gateways notification Sender Name</label>
                 </field>
-                <field id="disabled_gateways_notification_receivers" translate="label comment" sortOrder="520" showInDefault="1">
+                <field id="disabled_gateways_notification_receivers" translate="label comment" sortOrder="520" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Disabled gateways notification Receivers</label>
                     <frontend_model>BlueMedia\BluePayment\Block\Adminhtml\System\Config\Form\Field\Receivers</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
-                <field id="title_automatic" translate="label" type="text" sortOrder="521" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Title Automatic Gateway</label>
-                </field>
-                <field id="iframe_payment" translate="label comment" type="select" sortOrder="523" showInDefault="1" showInWebsite="0" showInStore="1">
-                    <label>Iframe Payment</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <!--<field id="auto_payment" translate="label comment" type="select" sortOrder="524" showInDefault="1" showInWebsite="0" showInStore="1">-->
-                    <!--<label>Auto Payment</label>-->
-                    <!--<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>-->
-                <!--</field>-->
-                <field id="disabled_gateways_notification_template" translate="label comment" type="select" sortOrder="530" showInDefault="1">
+                <field id="disabled_gateways_notification_template" translate="label comment" type="select" sortOrder="530" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Disabled gateways notification Template</label>
                     <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
                 </field>
-            </group>
-            <group id="bluepayment_pln" translate="label" type="text" sortOrder="681" showInDefault="1" showInWebsite="1" showInStore="0">
-                <label>Online payment BM (PLN)</label>
-                <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Service partner ID</label>
+                <field id="iframe_payment" translate="label comment" type="select" sortOrder="550" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Iframe Payment</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <comment><![CDATA[Payment without redirecting to BM gateway.]]></comment>
                 </field>
-                <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Shared key</label>
+
+                <field id="collapsible" translate="label comment" type="select" sortOrder="560" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Collapsible gateway list</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
                 </field>
-            </group>
-            <group id="bluepayment_eur" translate="label" type="text" sortOrder="682" showInDefault="1" showInWebsite="1" showInStore="0">
-                <label>Online payment BM (EUR)</label>
-                <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Service partner ID</label>
+
+                <field id="autopay_agreement" translate="label comment" type="editor" sortOrder="600" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Autopay Agreement</label>
                 </field>
-                <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Shared key</label>
-                </field>
-            </group>
-            <group id="bluepayment_gbp" translate="label" type="text" sortOrder="683" showInDefault="1" showInWebsite="1" showInStore="0">
-                <label>Online payment BM (GBP)</label>
-                <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Service partner ID</label>
-                </field>
-                <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Shared key</label>
-                </field>
-            </group>
-            <group id="bluepayment_usd" translate="label" type="text" sortOrder="684" showInDefault="1" showInWebsite="1" showInStore="0">
-                <label>Online payment BM (USD)</label>
-                <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Service partner ID</label>
-                </field>
-                <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Shared key</label>
-                </field>
+
+                <group id="pln" translate="label" type="text" sortOrder="600" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>PLN configuration</label>
+                    <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Service partner ID</label>
+                    </field>
+                    <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Shared key</label>
+                    </field>
+                </group>
+                <group id="eur" translate="label" type="text" sortOrder="610" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>EUR configuration</label>
+                    <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Service partner ID</label>
+                    </field>
+                    <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Shared key</label>
+                    </field>
+                </group>
+                <group id="gbp" translate="label" type="text" sortOrder="620" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>GBP configuration</label>
+                    <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Service partner ID</label>
+                    </field>
+                    <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Shared key</label>
+                    </field>
+                </group>
+                <group id="usd" translate="label" type="text" sortOrder="630" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>USD configuration</label>
+                    <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Service partner ID</label>
+                    </field>
+                    <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Shared key</label>
+                    </field>
+                </group>
+                <group id="czk" translate="label" type="text" sortOrder="640" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>CZK configuration</label>
+                    <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Service partner ID</label>
+                    </field>
+                    <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Shared key</label>
+                    </field>
+                </group>
+                <group id="ron" translate="label" type="text" sortOrder="650" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>RON configuration</label>
+                    <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Service partner ID</label>
+                    </field>
+                    <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Shared key</label>
+                    </field>
+                </group>
+                <group id="huf" translate="label" type="text" sortOrder="660" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>HUF configuration</label>
+                    <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Service partner ID</label>
+                    </field>
+                    <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Shared key</label>
+                    </field>
+                </group>
+                <group id="bgn" translate="label" type="text" sortOrder="670" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>BGN configuration</label>
+                    <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Service partner ID</label>
+                    </field>
+                    <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Shared key</label>
+                    </field>
+                </group>
+                <group id="uah" translate="label" type="text" sortOrder="680" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>UAH configuration</label>
+                    <field id="service_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Service partner ID</label>
+                    </field>
+                    <field id="shared_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Shared key</label>
+                    </field>
+                </group>
             </group>
         </section>
     </system>

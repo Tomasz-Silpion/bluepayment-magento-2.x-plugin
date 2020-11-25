@@ -8,8 +8,6 @@ use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 
 /**
- * Class Gateways
- *
  * @method int getGatewayStatus()
  * @method string getGatewayCurrency()
  * @method int getForceDisable()
@@ -21,10 +19,7 @@ use Magento\Framework\Model\AbstractModel;
  * @method string getGatewayType()
  * @method string getGatewayLogoUrl()
  * @method int getUseOwnLogo()
- * @method int getIsSeparatedMethod()
  * @method string getGatewayLogoPath()
- *
- * @package BlueMedia\BluePayment\Model
  */
 class Gateways extends AbstractModel implements IdentityInterface, GatewaysInterface
 {
@@ -32,9 +27,6 @@ class Gateways extends AbstractModel implements IdentityInterface, GatewaysInter
     const STATUS_ACTIVE   = 1;
     const STATUS_INACTIVE = 0;
 
-    /**
-     *
-     */
     const CACHE_TAG = 'blue_gateways';
 
     /**
@@ -77,5 +69,21 @@ class Gateways extends AbstractModel implements IdentityInterface, GatewaysInter
     public function isActive()
     {
         return $this->getGatewayStatus() == self::STATUS_ACTIVE && $this->getForceDisable() != self::FORCE_DISABLE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsSeparatedMethod()
+    {
+        if (in_array($this->getGatewayId(), [
+            ConfigProvider::AUTOPAY_GATEWAY_ID,
+            ConfigProvider::GPAY_GATEWAY_ID,
+            ConfigProvider::APPLE_PAY_GATEWAY_ID
+        ])) {
+            return true;
+        }
+
+        return $this->getData('is_separated_method');
     }
 }

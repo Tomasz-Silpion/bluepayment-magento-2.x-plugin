@@ -3,32 +3,28 @@
 namespace BlueMedia\BluePayment\Controller\Adminhtml\Gateways;
 
 use BlueMedia\BluePayment\Controller\Adminhtml\Gateways;
+use Magento\Backend\Model\View\Result\Page;
+use Magento\Framework\App\ResponseInterface;
 
-/**
- * Class Edit
- *
- * @package BlueMedia\BluePayment\Controller\Adminhtml\Gateways
- */
 class Edit extends Gateways
 {
     const GATEWAYS_REGISTER_CODE = 'adminbluepayment_gateways';
 
     /**
-     * @return \Magento\Backend\Model\View\Result\Page|void
+     * @return Page|ResponseInterface
      */
     public function execute()
     {
         $gatewaysId = (int)$this->getRequest()->getParam('id', 0);
         /** @var \BlueMedia\BluePayment\Model\Gateways $model */
-        $model = $this->_gatewaysFactory->create();
+        $model = $this->gatewaysFactory->create();
 
         if ($gatewaysId) {
             $model->load($gatewaysId);
             if (!$model->getId()) {
                 $this->messageManager->addError(__('This gateway no longer exists.'));
-                $this->_redirect('*/*/');
 
-                return;
+                return $this->_redirect('*/*/');
             }
         }
 
@@ -36,10 +32,10 @@ class Edit extends Gateways
         if (!empty($data)) {
             $model->setData($data);
         }
-        $this->_coreRegistry->register(self::GATEWAYS_REGISTER_CODE, $model);
+        $this->coreRegistry->register(self::GATEWAYS_REGISTER_CODE, $model);
 
-        /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
-        $resultPage = $this->_resultPageFactory->create();
+        /** @var Page $resultPage */
+        $resultPage = $this->resultPageFactory->create();
         $resultPage->setActiveMenu('BlueMedia_BluePayment::gateways');
         $resultPage->getConfig()->getTitle()->prepend(__('Gateways'));
 

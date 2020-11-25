@@ -3,24 +3,20 @@
 namespace BlueMedia\BluePayment\Block\Adminhtml\Gateways\Edit\Tab;
 
 use BlueMedia\BluePayment\Controller\Adminhtml\Gateways\Edit as GatewaysController;
+use BlueMedia\BluePayment\Model\ConfigProvider;
+use BlueMedia\BluePayment\Model\Gateways;
+use Magento\Backend\Block\Template\Context;
+use Magento\Backend\Block\Widget\Form;
 use Magento\Backend\Block\Widget\Form\Generic;
 use Magento\Backend\Block\Widget\Tab\TabInterface;
-use Magento\Backend\Block\Template\Context;
-use Magento\Framework\Registry;
-use Magento\Framework\Data\FormFactory;
 use Magento\Cms\Model\Wysiwyg\Config;
+use Magento\Framework\Data\FormFactory;
+use Magento\Framework\Registry;
 
-/**
- * Class Info
- *
- * @package BlueMedia\BluePayment\Block\Adminhtml\Gateways\Edit\Tab
- */
 class Info extends Generic implements TabInterface
 {
-    /**
-     * @var \Magento\Cms\Model\Wysiwyg\Config
-     */
-    protected $_wysiwygConfig;
+    /** @var \Magento\Cms\Model\Wysiwyg\Config */
+    public $wysiwygConfig;
 
     /**
      * @param Context     $context
@@ -30,13 +26,13 @@ class Info extends Generic implements TabInterface
      * @param array       $data
      */
     public function __construct(
-        Context     $context,
-        Registry    $registry,
+        Context $context,
+        Registry $registry,
         FormFactory $formFactory,
-        Config      $wysiwygConfig,
-        array       $data = []
+        Config $wysiwygConfig,
+        array $data = []
     ) {
-        $this->_wysiwygConfig = $wysiwygConfig;
+        $this->wysiwygConfig = $wysiwygConfig;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -79,11 +75,11 @@ class Info extends Generic implements TabInterface
     /**
      * Prepare form fields
      *
-     * @return \Magento\Backend\Block\Widget\Form
+     * @return Form
      */
     protected function _prepareForm()
     {
-        /** @var $model \BlueMedia\BluePayment\Model\Gateways */
+        /** @var Gateways $model */
         $model = $this->_coreRegistry->registry(GatewaysController::GATEWAYS_REGISTER_CODE);
 
         /** @var \Magento\Framework\Data\Form $form */
@@ -99,7 +95,14 @@ class Info extends Generic implements TabInterface
         $fieldset->addField('gateway_status', 'select', [
             'name'     => 'gateway_status',
             'label'    => __('Gateway Status'),
-            'required' => true,
+            'required' => false,
+            'disabled' => true,
+            'options'  => ['1' => __('Yes'), '0' => __('No')],
+        ]);
+        $fieldset->addField('force_disable', 'select', [
+            'name'     => 'force_disable',
+            'label'    => __('Force Disable'),
+            'required' => false,
             'options'  => ['1' => __('Yes'), '0' => __('No')],
         ]);
         $fieldset->addField('gateway_currency', 'text', [
@@ -141,12 +144,27 @@ class Info extends Generic implements TabInterface
             'required' => true,
             'disabled' => true,
         ]);
-        $fieldset->addField('is_separated_method', 'select', [
-            'name'     => 'is_separated_method',
-            'label'    => __('Is separated method'),
-            'required' => false,
-            'options'  => ['1' => __('Yes'), '0' => __('No')],
-        ]);
+
+        if (in_array($model->getGatewayId(), [
+            ConfigProvider::AUTOPAY_GATEWAY_ID,
+            ConfigProvider::GPAY_GATEWAY_ID,
+            ConfigProvider::APPLE_PAY_GATEWAY_ID
+        ])) {
+            $fieldset->addField('is_separated_method', 'select', [
+                'name' => 'is_separated_method',
+                'label' => __('Is separated method'),
+                'required' => false,
+                'disabled' => true,
+                'options' => ['1' => __('Yes'), '0' => __('No')],
+            ]);
+        } else {
+            $fieldset->addField('is_separated_method', 'select', [
+                'name' => 'is_separated_method',
+                'label' => __('Is separated method'),
+                'required' => false,
+                'options' => ['1' => __('Yes'), '0' => __('No')],
+            ]);
+        }
         $fieldset->addField('gateway_logo_url', 'text', [
             'name'     => 'gateway_logo_url',
             'label'    => __('Gateway Logo URL'),
@@ -171,12 +189,6 @@ class Info extends Generic implements TabInterface
             'label'       => __('Status Date'),
             'required'    => false,
             'disabled'    => true,
-        ]);
-        $fieldset->addField('force_disable', 'select', [
-            'name'     => 'force_disable',
-            'label'    => __('Force Disable Gateway'),
-            'required' => false,
-            'options'  => ['1' => __('Yes'), '0' => __('No')],
         ]);
 
         $data = $model->getData();

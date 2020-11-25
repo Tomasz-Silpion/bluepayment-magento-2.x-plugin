@@ -1,44 +1,32 @@
 <?php
-/**
- * Copyright © 2016 Bold Brand Commerce
- * created by Piotr Kozioł (piotr.koziol@bold.net.pl)
- */
 
 namespace BlueMedia\BluePayment\Controller\Adminhtml\Gateways;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 
-/**
- * Class Index
- *
- * @package BlueMedia\BluePayment\Controller\Adminhtml\Gateways
- */
 class Index extends Action
 {
-    /**
-     * @var \Magento\Framework\View\Result\PageFactory
-     */
-    protected $_resultPageFactory;
+    /** @var PageFactory */
+    public $resultPageFactory;
 
-    /**
-     * @var \Magento\Framework\View\Result\Page
-     */
-    protected $_resultPage;
+    /** @var Page */
+    public $resultPage;
 
     /**
      * Index constructor.
      *
-     * @param \Magento\Backend\App\Action\Context        $context
-     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
+     * @param Context     $context
+     * @param PageFactory $resultPageFactory
      */
     public function __construct(
-        Context     $context,
+        Context $context,
         PageFactory $resultPageFactory
     ) {
         parent::__construct($context);
-        $this->_resultPageFactory = $resultPageFactory;
+        $this->resultPageFactory = $resultPageFactory;
     }
 
     /**
@@ -52,7 +40,7 @@ class Index extends Action
     /**
      * Call page factory to render layout and page content
      *
-     * @return \Magento\Framework\View\Result\Page
+     * @return Page
      */
     public function execute()
     {
@@ -64,7 +52,7 @@ class Index extends Action
     /**
      * @return $this
      */
-    protected function _setPageData()
+    public function _setPageData()
     {
         $resultPage = $this->getResultPage();
         $resultPage->setActiveMenu('BlueMedia_BluePayment::gateways');
@@ -79,14 +67,17 @@ class Index extends Action
     /**
      * Returns created page
      *
-     * @return \Magento\Framework\View\Result\Page
+     * @return Page
      */
     public function getResultPage()
     {
-        if (is_null($this->_resultPage)) {
-            $this->_resultPage = $this->_resultPageFactory->create();
+        if ($this->resultPage === null) {
+            /** @var Page $resultPage */
+            $resultPage = $this->resultPageFactory->create();
+
+            $this->resultPage = $resultPage;
         }
 
-        return $this->_resultPage;
+        return $this->resultPage;
     }
 }

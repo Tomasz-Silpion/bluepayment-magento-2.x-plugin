@@ -3,14 +3,13 @@
 namespace BlueMedia\BluePayment\Block\Adminhtml\Gateways;
 
 use BlueMedia\BluePayment\Controller\Adminhtml\Gateways\Edit as GatewaysController;
-use Magento\Backend\Block\Widget\Form\Container;
 use Magento\Backend\Block\Widget\Context;
+use Magento\Backend\Block\Widget\Form\Container;
 use Magento\Framework\Registry;
+use Magento\Framework\View\Element\AbstractBlock;
 
 /**
- * Class Edit
- *
- * @package BlueMedia\BluePayment\Block\Adminhtml\Gateways
+ * Edit gateway block
  */
 class Edit extends Container
 {
@@ -19,7 +18,7 @@ class Edit extends Container
      *
      * @var \Magento\Framework\Registry
      */
-    protected $_coreRegistry = null;
+    public $coreRegistry = null;
 
     /**
      * @param Context  $context
@@ -27,11 +26,11 @@ class Edit extends Container
      * @param array    $data
      */
     public function __construct(
-        Context  $context,
+        Context $context,
         Registry $registry,
-        array    $data = []
+        array $data = []
     ) {
-        $this->_coreRegistry = $registry;
+        $this->coreRegistry = $registry;
         parent::__construct($context, $data);
     }
 
@@ -71,7 +70,7 @@ class Edit extends Container
      */
     public function getHeaderText()
     {
-        $gatewaysRegistry = $this->_coreRegistry->registry(GatewaysController::GATEWAYS_REGISTER_CODE);
+        $gatewaysRegistry = $this->coreRegistry->registry(GatewaysController::GATEWAYS_REGISTER_CODE);
         if ($gatewaysRegistry->getId()) {
             $gatewaysTitle = $this->escapeHtml($gatewaysRegistry->getTitle());
 
@@ -84,7 +83,7 @@ class Edit extends Container
     /**
      * Prepare layout
      *
-     * @return \Magento\Framework\View\Element\AbstractBlock
+     * @return AbstractBlock
      */
     protected function _prepareLayout()
     {

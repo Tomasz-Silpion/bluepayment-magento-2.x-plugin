@@ -1,42 +1,32 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: piotr
- * Date: 06.12.2016
- * Time: 15:40
- */
 
 namespace BlueMedia\BluePayment\Cron;
 
+use BlueMedia\BluePayment\Helper\Gateways;
+use BlueMedia\BluePayment\Logger\Logger;
+
 /**
- * Class Synchronization
- *
- * @package BlueMedia\BluePayment\Cron
+ * Gateway synchronization CRON Job
  */
 class Synchronization
 {
-    /**
-     * @var \Zend\Log\Logger
-     */
-    protected $_logger;
+    /** @var Logger */
+    public $logger;
 
     /**
-     * @var \BlueMedia\BluePayment\Helper\Gateways
+     * @var Gateways
      */
-    protected $_gatewaysHelper;
+    public $gatewayHelper;
 
     /**
      * Synchronization constructor.
      *
-     * @param \BlueMedia\BluePayment\Helper\Gateways $gatewayHelper
+     * @param Gateways $gatewayHelper
      */
-    public function __construct(\BlueMedia\BluePayment\Helper\Gateways $gatewayHelper)
+    public function __construct(Gateways $gatewayHelper, Logger $logger)
     {
-        $writer        = new \Zend\Log\Writer\Stream(BP . '/var/log/bluemedia.log');
-        $this->_logger = new \Zend\Log\Logger();
-        $this->_logger->addWriter($writer);
-
-        $this->_gatewaysHelper = $gatewayHelper;
+        $this->gatewayHelper = $gatewayHelper;
+        $this->logger = $logger;
     }
 
     /**
@@ -44,8 +34,8 @@ class Synchronization
      */
     public function execute()
     {
-        $this->_logger->info(__METHOD__);
-        $this->_gatewaysHelper->syncGateways();
+        $this->logger->info(__METHOD__);
+        $this->gatewayHelper->syncGateways();
 
         return $this;
     }

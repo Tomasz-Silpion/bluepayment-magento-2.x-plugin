@@ -2,47 +2,43 @@
 
 namespace BlueMedia\BluePayment\Model;
 
+use BlueMedia\BluePayment\Api\Data\RefundTransactionInterface;
 use BlueMedia\BluePayment\Api\Data\TransactionInterface;
 use BlueMedia\BluePayment\Api\RefundTransactionRepositoryInterface;
-use BlueMedia\BluePayment\Api\Data\RefundTransactionInterface;
-use BlueMedia\BluePayment\Model\RefundTransactionFactory;
+use BlueMedia\BluePayment\Model\ResourceModel\RefundTransaction\Collection;
 use BlueMedia\BluePayment\Model\ResourceModel\RefundTransaction\CollectionFactory;
-
-use Magento\Framework\Api\SortOrder;
+use Exception;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SearchResultsInterfaceFactory;
+use Magento\Framework\Api\SortOrder;
+use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Sales\Api\Data\OrderInterface;
 
-/**
- * Class TransactionRepository
- * @package BlueMedia\BluePayment\Model
- */
 class RefundTransactionRepository implements RefundTransactionRepositoryInterface
 {
     /**
-     * @var \BlueMedia\BluePayment\Model\RefundTransactionFactory
+     * @var RefundTransactionFactory
      */
     protected $transactionFactory;
 
     /**
-     * @var \BlueMedia\BluePayment\Model\ResourceModel\RefundTransaction\CollectionFactory
+     * @var CollectionFactory
      */
     protected $transactionCollectionFactory;
 
     /**
-     * @var \Magento\Framework\Api\SearchResultsInterfaceFactory
+     * @var SearchResultsInterfaceFactory
      */
     protected $searchResultsFactory;
 
     /**
      * TransactionRepository constructor.
      *
-     * @param \BlueMedia\BluePayment\Model\RefundTransactionFactory                          $transactionFactory
-     * @param \BlueMedia\BluePayment\Model\ResourceModel\RefundTransaction\CollectionFactory $transactionCollectionFactory
-     * @param \Magento\Framework\Api\SearchResultsInterfaceFactory                           $searchResultsFactory
+     * @param RefundTransactionFactory $transactionFactory
+     * @param CollectionFactory $transactionCollectionFactory
+     * @param SearchResultsInterfaceFactory $searchResultsFactory
      */
     public function __construct(
         RefundTransactionFactory $transactionFactory,
@@ -64,7 +60,7 @@ class RefundTransactionRepository implements RefundTransactionRepositoryInterfac
     {
         try {
             $object->save();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new CouldNotSaveException(__($e->getMessage()));
         }
 
@@ -74,7 +70,7 @@ class RefundTransactionRepository implements RefundTransactionRepositoryInterfac
     /**
      * @param \Magento\Sales\Api\Data\OrderInterface $order
      *
-     * @return \BlueMedia\BluePayment\Model\ResourceModel\RefundTransaction\Collection
+     * @return Collection
      */
     public function getListForOrder(OrderInterface $order)
     {
@@ -87,7 +83,7 @@ class RefundTransactionRepository implements RefundTransactionRepositoryInterfac
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return bool
      */
@@ -106,7 +102,7 @@ class RefundTransactionRepository implements RefundTransactionRepositoryInterfac
     {
         try {
             $object->delete();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotDeleteException(__($exception->getMessage()));
         }
 
@@ -114,7 +110,7 @@ class RefundTransactionRepository implements RefundTransactionRepositoryInterfac
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -178,11 +174,11 @@ class RefundTransactionRepository implements RefundTransactionRepositoryInterfac
     }
 
     /**
-     * @param $transaction
+     * @param TransactionInterface $transaction
      *
      * @return float
      */
-    public function getTotalRefundAmountOnTransaction(TransactionInterface $transaction): float
+    public function getTotalRefundAmountOnTransaction(TransactionInterface $transaction)
     {
         $total = 0.00;
 

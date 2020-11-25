@@ -3,16 +3,12 @@
 namespace BlueMedia\BluePayment\Logger;
 
 use Magento\Framework\Filesystem\DriverInterface;
+use Magento\Framework\Logger\Handler\Base;
 
-/**
- * Class Handler
- *
- * @package BlueMedia\BluePayment\Logger
- */
-class Handler extends \Magento\Framework\Logger\Handler\Base
+class Handler extends Base
 {
     const LOG_FILE_NAME_PREFIX = 'BlueMedia';
-    const LOG_MAIN_DIR         = '/var/log';
+    const LOG_MAIN_DIR         = '/var/log/BlueMedia/';
     const LOG_FILE_DATE_FORMAT = 'Y-m-d';
 
     /**
@@ -20,37 +16,37 @@ class Handler extends \Magento\Framework\Logger\Handler\Base
      *
      * @var int
      */
-    protected $loggerType = 200;
+    public $loggerType = 200;
 
     /**
      * @var string
      */
-    protected $fileName = '';
+    public $fileName = '';
 
     /**
      * Handler constructor.
      *
      * @param DriverInterface $filesystem
      */
-    public function __construct(DriverInterface $filesystem/*, $filePath*/)
+    public function __construct(DriverInterface $filesystem)
     {
         $this->setLogFileName();
 
-        parent::__construct($filesystem/*, $filePath*/);
+        parent::__construct($filesystem);
     }
 
     /**
      * @return void
      */
-    protected function setLogFileName()
+    public function setLogFileName()
     {
-        $this->fileName = self::LOG_MAIN_DIR . '/' . self::LOG_FILE_NAME_PREFIX . '_' . $this->getFileSuffixAsDate() . '.log';
+        $this->fileName = self::LOG_MAIN_DIR.'/'.self::LOG_FILE_NAME_PREFIX.'_'.$this->getFileSuffixAsDate().'.log';
     }
 
     /**
      * @return false|string
      */
-    protected function getFileSuffixAsDate()
+    public function getFileSuffixAsDate()
     {
         return date(self::LOG_FILE_DATE_FORMAT);
     }

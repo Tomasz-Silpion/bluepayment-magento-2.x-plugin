@@ -4,7 +4,6 @@ namespace BlueMedia\BluePayment\Api\Data;
 
 /**
  * Interface TransactionInterface
- * @package BlueMedia\BluePayment\Api\Data
  */
 interface RefundTransactionInterface
 {
@@ -25,73 +24,86 @@ interface RefundTransactionInterface
     /**
      * @return string
      */
-    public function getOrderId(): string;
+    public function getOrderId();
 
     /**
      * @param string $orderId
      *
      * @return $this
      */
-    public function setOrderId(string $orderId);
+    public function setOrderId($orderId);
 
     /**
      * @return string
      */
-    public function getRemoteId(): string;
+    public function getRemoteId();
 
     /**
      * @param string $remoteId
      *
      * @return $this
      */
-    public function setRemoteId(string $remoteId);
+    public function setRemoteId($remoteId);
 
     /**
      * @return string
      */
-    public function getRemoteOutId(): string;
+    public function getRemoteOutId();
 
     /**
      * @param string $remoteId
      *
      * @return $this
      */
-    public function setRemoteOutId(string $remoteId);
+    public function setRemoteOutId($remoteId);
 
     /**
      * @return float
      */
-    public function getAmount(): float;
+    public function getAmount();
 
     /**
      * @param float $amount
      *
      * @return $this
      */
-    public function setAmount(float $amount);
+    public function setAmount($amount);
 
     /**
      * @return string
      */
-    public function getCurrency(): string;
+    public function getCurrency();
 
     /**
      * @param string $currency
      *
      * @return $this
      */
-    public function setCurrency(string $currency);
+    public function setCurrency($currency);
 
     /**
      * @return bool
      */
-    public function isPartial(): bool;
+    public function isPartial();
 
     /**
      * @param bool $isPartial
      *
      * @return $this
      */
-    public function setIsPartial(bool $isPartial);
+    public function setIsPartial($isPartial);
 
+    /**
+     * Save object data
+     *
+     * @return $this
+     */
+    public function save();
+
+    /**
+     * Delete object from database
+     *
+     * @return $this
+     */
+    public function delete();
 }

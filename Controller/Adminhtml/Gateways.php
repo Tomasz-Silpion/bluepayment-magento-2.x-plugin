@@ -2,11 +2,12 @@
 
 namespace BlueMedia\BluePayment\Controller\Adminhtml;
 
+use BlueMedia\BluePayment\Model\GatewaysFactory;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
-use BlueMedia\BluePayment\Model\GatewaysFactory;
+use BlueMedia\BluePayment\Logger\Logger;
 
 /**
  * Class Gateways
@@ -15,54 +16,38 @@ use BlueMedia\BluePayment\Model\GatewaysFactory;
  */
 abstract class Gateways extends Action
 {
-    /**
-     * Core registry
-     *
-     * @var \Magento\Framework\Registry
-     */
-    protected $_coreRegistry;
+    /** @var Registry */
+    public $coreRegistry;
+
+    /** @var PageFactory */
+    public $resultPageFactory;
+
+    /** @var GatewaysFactory */
+    public $gatewaysFactory;
+
+    /** @var Logger */
+    public $logger;
 
     /**
-     * Result page factory
-     *
-     * @var \Magento\Framework\View\Result\PageFactory
-     */
-    protected $_resultPageFactory;
-
-    /**
-     * Gateways model factory
-     *
-     * @var \BlueMedia\BluePayment\Model\GatewaysFactory
-     */
-    protected $_gatewaysFactory;
-
-    /**
-     * Used for creating logs
-     *
-     * @var \Zend\Log\Logger
-     */
-    protected $_logger;
-
-    /**
-     * @param Context         $context
-     * @param Registry        $coreRegistry
-     * @param PageFactory     $resultPageFactory
+     * @param Context $context
+     * @param Registry $coreRegistry
+     * @param PageFactory $resultPageFactory
      * @param GatewaysFactory $gatewaysFactory
+     * @param Logger $logger
      */
     public function __construct(
-        Context         $context,
-        Registry        $coreRegistry,
-        PageFactory     $resultPageFactory,
-        GatewaysFactory $gatewaysFactory
-    ) {
+        Context $context,
+        Registry $coreRegistry,
+        PageFactory $resultPageFactory,
+        GatewaysFactory $gatewaysFactory,
+        Logger $logger
+    )
+    {
         parent::__construct($context);
-        $this->_coreRegistry      = $coreRegistry;
-        $this->_resultPageFactory = $resultPageFactory;
-        $this->_gatewaysFactory   = $gatewaysFactory;
-
-        $writer        = new \Zend\Log\Writer\Stream(BP . '/var/log/bluemedia.log');
-        $this->_logger = new \Zend\Log\Logger();
-        $this->_logger->addWriter($writer);
+        $this->coreRegistry = $coreRegistry;
+        $this->resultPageFactory = $resultPageFactory;
+        $this->gatewaysFactory = $gatewaysFactory;
+        $this->logger = $logger;
     }
 
     /**

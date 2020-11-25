@@ -1,29 +1,37 @@
 <?php
-/**
- * @author    Bold Piotr Kozioł
- * @copyright Copyright (c) 2016 Bold Bran Commerce
- * @package   BlueMedia_BluePayment
- */
 
 namespace BlueMedia\BluePayment\Setup;
 
+use Magento\Framework\App\Config\ConfigResource\ConfigInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
-use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Setup\UpgradeSchemaInterface;
+use Magento\Store\Model\Store;
 
-/**
- * Class UpgradeSchema
- *
- * @package BlueMedia\BluePayment\Setup
- */
 class UpgradeSchema implements UpgradeSchemaInterface
 {
+    /** @var ScopeConfigInterface */
+    private $scopeConfig;
+
+    /** @var ConfigInterface */
+    private $resourceConfig;
+
+    public function __construct(ScopeConfigInterface $scopeConfig, ConfigInterface $resourceConfig)
+    {
+        $this->scopeConfig = $scopeConfig;
+        $this->resourceConfig = $resourceConfig;
+    }
+
     /**
      * Function that upgrades module
      *
      * @param SchemaSetupInterface   $setup
      * @param ModuleContextInterface $context
+     *
+     * @return void
      */
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -50,12 +58,22 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '2.4.0') < 0) {
             $this->addCurrencyToGateways($setup);
         }
+
+        if (version_compare($context->getVersion(), '2.6.0') < 0) {
+            $this->updateConfigs($setup);
+        }
+
+        if (version_compare($context->getVersion(), '2.7.0') < 0) {
+            $this->addCardTable($setup);
+        }
     }
 
     /**
      * creates table blue_gateways in database
      *
      * @param SchemaSetupInterface $setup
+     *
+     * @return void
      */
     private function installBlueMediaTable(SchemaSetupInterface $setup)
     {
@@ -147,7 +165,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
     }
 
     /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $installer
+     * @param SchemaSetupInterface $installer
+     *
+     * @return void
      */
     private function addCardFlagToBlueMediaTable(SchemaSetupInterface $installer)
     {
@@ -167,7 +187,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
     }
 
     /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     * @param SchemaSetupInterface $setup
+     *
+     * @return void
      */
     private function addForceDisabledToBlueMediaGatewaysTable(SchemaSetupInterface $setup)
     {
@@ -191,7 +213,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
     }
 
     /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     * @param SchemaSetupInterface $setup
+     *
+     * @return void
      */
     private function addTransactionAndRefundTables(SchemaSetupInterface $setup)
     {
@@ -204,7 +228,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
     }
 
     /**
-     * @param $installer
+     * @param SchemaSetupInterface $installer
+     *
+     * @return void
      */
     private function createTransactionTable(SchemaSetupInterface $installer)
     {
@@ -275,7 +301,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
     }
 
     /**
-     * @param $installer
+     * @param SchemaSetupInterface $installer
+     *
+     * @return void
      */
     private function createRefundTable(SchemaSetupInterface $installer)
     {
@@ -340,7 +368,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
     }
 
     /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     * @param SchemaSetupInterface $setup
+     *
+     * @return void
      */
     private function addCurrencyToGateways(SchemaSetupInterface $setup)
     {
@@ -363,5 +393,164 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 );
         }
         $installer->endSetup();
+    }
+
+    /**
+     * @param SchemaSetupInterface $setup
+     *
+     * @return void
+     */
+    private function updateConfigs(SchemaSetupInterface $setup)
+    {
+        $installer = $setup;
+        $installer->startSetup();
+
+        $path = 'payment/bluepayment';
+        $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
+        $scopeId = Store::DEFAULT_STORE_ID;
+
+        $this->resourceConfig->saveConfig(
+            $path.'/pln/service_id',
+            $this->scopeConfig->getValue($path.'_pln/service_id'),
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->saveConfig(
+            $path.'/pln/shared_key',
+            $this->scopeConfig->getValue($path.'_pln/shared_key'),
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->saveConfig(
+            $path.'/eur/service_id',
+            $this->scopeConfig->getValue($path .'_eur/service_id'),
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->saveConfig(
+            $path.'/eur/shared_key',
+            $this->scopeConfig->getValue($path .'_eur/shared_key'),
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->saveConfig(
+            $path.'/gbp/service_id',
+            $this->scopeConfig->getValue($path .'_gbp/service_id'),
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->saveConfig(
+            $path.'/gbp/shared_key',
+            $this->scopeConfig->getValue($path .'_gbp/shared_key'),
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->saveConfig(
+            $path.'/usd/service_id',
+            $this->scopeConfig->getValue($path .'_usd/service_id'),
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->saveConfig(
+            $path.'/usd/shared_key',
+            $this->scopeConfig->getValue($path .'_usd/shared_key'),
+            $scope,
+            $scopeId
+        );
+
+        $this->resourceConfig->deleteConfig(
+            $path.'_pln/service_id',
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->deleteConfig(
+            $path.'_pln/shared_key',
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->deleteConfig(
+            $path.'_eur/service_id',
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->deleteConfig(
+            $path.'_eur/shared_key',
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->deleteConfig(
+            $path.'_gbp/service_id',
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->deleteConfig(
+            $path.'_gbp/shared_key',
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->deleteConfig(
+            $path.'_usd/service_id',
+            $scope,
+            $scopeId
+        );
+        $this->resourceConfig->deleteConfig(
+            $path.'_usd/shared_key',
+            $scope,
+            $scopeId
+        );
+
+        $installer->endSetup();
+    }
+
+    /**
+     * @param SchemaSetupInterface $installer
+     *
+     * @return void
+     */
+    private function addCardTable(SchemaSetupInterface $installer)
+    {
+        $table = $installer->getConnection()->newTable(
+            $installer->getTable('blue_card')
+        )
+            ->addColumn('card_id', Table::TYPE_INTEGER, null, [
+                'identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true
+            ], 'Entity ID')
+            ->addColumn('customer_id', Table::TYPE_INTEGER, null, [
+                'unsigned' => true, 'nullable' => false
+            ], 'Customer ID')
+            ->addColumn('card_index', Table::TYPE_INTEGER, null, [
+                'unsigned' => true, 'nullable' => false
+            ], 'Card index')
+            ->addColumn('validity_year', Table::TYPE_TEXT, 4, ['nullable' => false], 'Validity year')
+            ->addColumn('validity_month', Table::TYPE_TEXT, 2, ['nullable' => false], 'Validity month')
+            ->addColumn('issuer', Table::TYPE_TEXT, 100, ['nullable' => false], 'Card issuer')
+            ->addColumn('mask', Table::TYPE_TEXT, null, ['nullable' => false], 'Card mask')
+            ->addColumn('client_hash', Table::TYPE_TEXT, 64, ['nullable' => false,], 'Client hash')
+            ->addIndex(
+                $installer->getIdxName(
+                    'blue_card_client_hash_unique_index',
+                    ['client_hash'],
+                    AdapterInterface::INDEX_TYPE_UNIQUE
+                ),
+                ['client_hash'],
+                ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
+            )
+            ->addForeignKey(
+                $installer->getFkName(
+                    $installer->getTable('blue_card'),
+                    'customer_id',
+                    $installer->getTable('customer_entity'),
+                    'entity_id'
+                ),
+                'customer_id',
+                $installer->getTable('customer_entity'),
+                'entity_id',
+                Table::ACTION_CASCADE
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+
+        $installer->getConnection()->createTable($table);
     }
 }

@@ -1,111 +1,75 @@
 <?php
-/**
- * @package     BlueMedia_BluePayment
- * @copyright   Copyright ⓒ 2017 BOLD BRAND COMMERCE SP. Z O.O. (http://bold.net.pl/)
- * @author      Piotr Koziol <piotr.koziol@bold.net.pl>
- */
 
 namespace BlueMedia\BluePayment\Helper;
 
+use BlueMedia\BluePayment\Logger\Logger;
+use Exception;
+use Magento\Backend\Model\Auth\Session;
+use Magento\Framework\App\Area;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\Translate\Inline\StateInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Mail\Template\TransportBuilder;
+use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\Translate\Inline\StateInterface;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Framework\App\Area;
-use Magento\Backend\Model\Auth\Session;
+use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\User\Model\User;
 
-/**
- * Class Email
- *
- * @package BlueMedia\BluePayment\Helper
- */
 class Email extends AbstractHelper
 {
-    const XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_ACTIVE_FIELD       = 'payment/bluepayment/disabled_gateways_notification_active';
-    const XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_SENDER_NAME_FIELD  = 'payment/bluepayment/disabled_gateways_notification_sender_name';
-    const XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_SENDER_EMAIL_FIELD = 'trans_email/ident_general/email';
-    const XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_RECEIVERS_FIELD    = 'payment/bluepayment/disabled_gateways_notification_receivers';
-    const XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_TEMPLATE_FIELD     = 'payment/bluepayment/disabled_gateways_notification_template';
+    const XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_ACTIVE_FIELD
+        = 'payment/bluepayment/disabled_gateways_notification_active';
+    const XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_SENDER_NAME_FIELD
+        = 'payment/bluepayment/disabled_gateways_notification_sender_name';
+    const XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_SENDER_EMAIL_FIELD
+        = 'trans_email/ident_general/email';
+    const XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_RECEIVERS_FIELD
+        = 'payment/bluepayment/disabled_gateways_notification_receivers';
+    const XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_TEMPLATE_FIELD
+        = 'payment/bluepayment/disabled_gateways_notification_template';
 
-    /**
-     * @var StoreManagerInterface
-     */
-    protected $_storeManager;
+    /** @var StoreManagerInterface */
+    public $storeManager;
 
-    /**
-     * @var StateInterface
-     */
-    protected $inlineTranslation;
+    /** @var StateInterface */
+    public $inlineTranslation;
 
-    /**
-     * @var TransportBuilder
-     */
-    protected $_transportBuilder;
+    /** @var TransportBuilder */
+    public $transportBuilder;
 
-    /**
-     * @var Session
-     */
-    protected $_authSession;
+    /** @var Session */
+    public $authSession;
 
-    /**
-     * Logger
-     *
-     * @var \Zend\Log\Logger
-     */
-    protected $_logger;
+    /** @var Logger */
+    public $logger;
 
     /**
      * Email constructor.
      *
-     * @param Context               $context
+     * @param Context $context
      * @param StoreManagerInterface $storeManager
-     * @param StateInterface        $inlineTranslation
-     * @param TransportBuilder      $transportBuilder
-     * @param Session               $authSession
+     * @param StateInterface $inlineTranslation
+     * @param TransportBuilder $transportBuilder
+     * @param Session $authSession
+     * @param Logger $logger
      */
     public function __construct(
-        Context               $context,
+        Context $context,
         StoreManagerInterface $storeManager,
-        StateInterface        $inlineTranslation,
-        TransportBuilder      $transportBuilder,
-        Session               $authSession
-    ) {
+        StateInterface $inlineTranslation,
+        TransportBuilder $transportBuilder,
+        Session $authSession,
+        Logger $logger
+    )
+    {
         parent::__construct($context);
-        $this->_storeManager     = $storeManager;
+        $this->storeManager = $storeManager;
         $this->inlineTranslation = $inlineTranslation;
-        $this->_transportBuilder = $transportBuilder;
-        $this->_authSession      = $authSession;
-
-        $writer        = new \Zend\Log\Writer\Stream(BP . '/var/log/bluemedia_notificator.log');
-        $this->_logger = new \Zend\Log\Logger();
-        $this->_logger->addWriter($writer);
-    }
-
-    /**
-     * @param string $path
-     * @param int    $storeId
-     *
-     * @return mixed
-     */
-    protected function getConfigValue($path, $storeId)
-    {
-        return $this->scopeConfig->getValue(
-            $path,
-            ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-    }
-
-    /**
-     * Get Store
-     *
-     * @return \Magento\Store\Api\Data\StoreInterface
-     */
-    public function getStore()
-    {
-        return $this->_storeManager->getStore();
+        $this->transportBuilder = $transportBuilder;
+        $this->authSession = $authSession;
+        $this->logger = $logger;
     }
 
     /**
@@ -118,11 +82,11 @@ class Email extends AbstractHelper
     public function sendGatewayDeactivationEmail(array $disabledGateways = [])
     {
         $receiverInfo = $this->geEmailReceivers();
-        $senderInfo   = [
-            'name'  => $this->getSenderName(),
+        $senderInfo = [
+            'name' => $this->getSenderName(),
             'email' => $this->getSenderEmail(),
         ];
-        $templateId   = $this->getTemplateId();
+        $templateId = $this->getTemplateId();
         if (empty($senderInfo)
             || empty($receiverInfo)
             || empty($disabledGateways)
@@ -142,9 +106,8 @@ class Email extends AbstractHelper
         }
 
         $currentUser = $this->getCurrentUser();
-        if (!is_null($currentUser)) {
+        if ($currentUser !== null) {
             $source = $currentUser->getFirstName() . ' ' . $currentUser->getLastName();
-
         } else {
             $source = __('CRON Service');
         }
@@ -155,33 +118,22 @@ class Email extends AbstractHelper
                 $templateId,
                 [
                     'gateways' => $disabledGatewaysMsg,
-                    'source'   => $source,
+                    'source' => $source,
                 ],
                 $senderInfo,
                 $receiverInfo
             );
 
-            $transport = $this->_transportBuilder->getTransport();
+            $transport = $this->transportBuilder->getTransport();
             $transport->sendMessage();
             $this->inlineTranslation->resume();
 
             return true;
-        } catch (\Exception $e) {
-            $this->_logger->info('Error has occurred during sending an email. Message: ' . $e->getMessage());
+        } catch (Exception $e) {
+            $this->logger->info('Error has occurred during sending an email. Message: ' . $e->getMessage());
         }
 
         return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSendingEnabled()
-    {
-        return $this->getConfigValue(
-            self::XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_ACTIVE_FIELD,
-            $this->getStore()->getStoreId()
-        );
     }
 
     /**
@@ -191,8 +143,8 @@ class Email extends AbstractHelper
      */
     public function geEmailReceivers()
     {
-        $result       = [];
-        $unserialized = unserialize(
+        $result = [];
+        $unserialized = $this->unserialize(
             $this->getConfigValue(
                 self::XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_RECEIVERS_FIELD,
                 $this->getStore()->getStoreId()
@@ -201,13 +153,55 @@ class Email extends AbstractHelper
         if ($unserialized) {
             foreach ($unserialized as $row) {
                 $result[] = [
-                    'name'  => $row['name'],
+                    'name' => $row['name'],
                     'email' => $row['email'],
                 ];
             }
         }
 
         return $result;
+    }
+
+    /**
+     * Backward compatibility for unserializer
+     *
+     * @param string $data
+     * @return mixed
+     */
+    private function unserialize($data)
+    {
+        // For Magento 2.2+
+        $objectManager = ObjectManager::getInstance();
+        $serializer = $objectManager->create(SerializerInterface::class);
+        return $serializer->unserialize($data);
+    }
+
+    /**
+     * @param string $path
+     * @param int $storeId
+     *
+     * @return mixed
+     */
+    protected function getConfigValue($path, $storeId)
+    {
+        return $this->scopeConfig->getValue(
+            $path,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Get Store
+     *
+     * @return Store
+     */
+    public function getStore()
+    {
+        /** @var Store $store */
+        $store = $this->storeManager->getStore();
+
+        return $store;
     }
 
     /**
@@ -243,41 +237,55 @@ class Email extends AbstractHelper
      */
     public function getTemplateId()
     {
-        return $this->getConfigValue(self::XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_TEMPLATE_FIELD, $this->getStore()->getStoreId());
+        return $this->getConfigValue(
+            self::XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_TEMPLATE_FIELD,
+            $this->getStore()->getStoreId()
+        );
     }
 
     /**
-     * @param int          $templateId
-     * @param array        $emailTemplateVariables
+     * @return bool
+     */
+    public function isSendingEnabled()
+    {
+        return $this->getConfigValue(
+            self::XML_PATH_DISABLED_GATEWAYS_NOTIFICATION_ACTIVE_FIELD,
+            $this->getStore()->getStoreId()
+        );
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getCurrentUser()
+    {
+        return $this->authSession->getUser();
+    }
+
+    /**
+     * @param int $templateId
+     * @param array $emailTemplateVariables
      * @param array|string $senderInfo
-     * @param array|string $receiverInfo
+     * @param array $receiverInfo
      *
      * @return void
      */
     public function generateTemplate($templateId, $emailTemplateVariables, $senderInfo, $receiverInfo)
     {
-        $this->_transportBuilder->setTemplateIdentifier($templateId)
+        $this->transportBuilder->setTemplateIdentifier((string)$templateId)
             ->setTemplateOptions(
                 [
-                    'area'  => Area::AREA_FRONTEND,
-                    'store' => $this->_storeManager->getStore()->getId(),
+                    'area' => Area::AREA_FRONTEND,
+                    'store' => $this->storeManager->getStore()->getId(),
                 ]
             )
             ->setTemplateVars($emailTemplateVariables)
             ->setFrom($senderInfo);
+
         foreach ($receiverInfo as $receiver) {
             if (isset($receiver['email']) && isset($receiver['name'])) {
-                $this->_transportBuilder->addTo($receiver['email'], $receiver['name']);
+                $this->transportBuilder->addTo($receiver['email'], $receiver['name']);
             }
         }
-        $this->_transportBuilder->getMessageText();
-    }
-
-    /**
-     * @return \Magento\User\Model\User|null
-     */
-    public function getCurrentUser()
-    {
-        return $this->_authSession->getUser();
     }
 }

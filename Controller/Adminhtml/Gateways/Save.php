@@ -3,56 +3,59 @@
 namespace BlueMedia\BluePayment\Controller\Adminhtml\Gateways;
 
 use BlueMedia\BluePayment\Controller\Adminhtml\Gateways;
+use BlueMedia\BluePayment\Helper\Email as EmailHelper;
+use BlueMedia\BluePayment\Logger\Logger;
+use BlueMedia\BluePayment\Model\GatewaysFactory;
+use Exception;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Request\Http;
+use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
-use BlueMedia\BluePayment\Model\GatewaysFactory;
-use BlueMedia\BluePayment\Helper\Email as EmailHelper;
 
-/**
- * Class Save
- *
- * @package BlueMedia\BluePayment\Controller\Adminhtml\Gateways
- */
 class Save extends Gateways
 {
-    /**
-     * @var EmailHelper
-     */
-    protected $_emailHelper;
+    /** @var EmailHelper */
+    public $emailHelper;
 
     /**
      * Save constructor.
      *
-     * @param Context         $context
-     * @param Registry        $coreRegistry
-     * @param PageFactory     $resultPageFactory
+     * @param Context $context
+     * @param Registry $coreRegistry
+     * @param PageFactory $resultPageFactory
      * @param GatewaysFactory $gatewaysFactory
-     * @param EmailHelper     $emailHelper
+     * @param Logger $logger
+     * @param EmailHelper $emailHelper
      */
     public function __construct(
-        Context         $context,
-        Registry        $coreRegistry,
-        PageFactory     $resultPageFactory,
+        Context $context,
+        Registry $coreRegistry,
+        PageFactory $resultPageFactory,
         GatewaysFactory $gatewaysFactory,
-        EmailHelper     $emailHelper
-    ) {
-        parent::__construct($context, $coreRegistry, $resultPageFactory, $gatewaysFactory);
-        $this->_emailHelper = $emailHelper;
+        Logger $logger,
+        EmailHelper $emailHelper
+    )
+    {
+        parent::__construct($context, $coreRegistry, $resultPageFactory, $gatewaysFactory, $logger);
+        $this->emailHelper = $emailHelper;
     }
 
     /**
-     * @return void
+     * @return void|ResultInterface
      */
     public function execute()
     {
-        $isPost = $this->getRequest()->getPost();
+        /** @var Http $request */
+        $request = $this->getRequest();
+
+        $isPost = $request->getPost();
 
         if ($isPost) {
-            $gatewaysModel = $this->_gatewaysFactory->create();
-            $gatewaysId    = (int)$this->getRequest()->getParam('id', 0);
+            $gatewaysModel = $this->gatewaysFactory->create();
+            $gatewaysId = (int)$this->getRequest()->getParam('id', 0);
 
-            $formData              = $this->getRequest()->getParam('gateways');
+            $formData = $this->getRequest()->getParam('gateways');
             $formData['entity_id'] = (int)$formData['id'];
 
             if ($gatewaysId) {
@@ -69,17 +72,17 @@ class Save extends Gateways
                 $disabledGateways = [
                     [
                         'gateway_name' => $gatewaysModel->getData('gateway_name'),
-                        'gateway_id'   => $gatewaysModel->getData('gateway_id'),
+                        'gateway_id' => $gatewaysModel->getData('gateway_id'),
                     ],
                 ];
-                $this->_emailHelper->sendGatewayDeactivationEmail($disabledGateways);
+                $this->emailHelper->sendGatewayDeactivationEmail($disabledGateways);
             }
 
             $gatewaysModel->setData($formData);
 
             try {
                 $gatewaysModel->save();
-                $this->messageManager->addSuccess(__('The gateway has been saved.'));
+                $this->messageManager->addSuccessMessage(__('The gateway has been saved.'));
                 if ($this->getRequest()->getParam('back')) {
                     $this->_redirect('*/*/edit', ['id' => $gatewaysModel->getId(), '_current' => true]);
 
@@ -89,8 +92,8 @@ class Save extends Gateways
                 $this->_redirect('*/*/');
 
                 return;
-            } catch (\Exception $e) {
-                $this->messageManager->addError($e->getMessage());
+            } catch (Exception $e) {
+                $this->messageManager->addErrorMessage($e->getMessage());
             }
 
             $this->_getSession()->setFormData($formData);

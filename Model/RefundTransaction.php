@@ -9,13 +9,9 @@ use Magento\Framework\Model\AbstractModel;
 
 /**
  * Class Transaction
- * @package BlueMedia\BluePayment\Model
  */
 class RefundTransaction extends AbstractModel implements RefundTransactionInterface, IdentityInterface
 {
-    /**
-     *
-     */
     const CACHE_TAG = 'blue_refund';
 
     /**
@@ -37,7 +33,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
     /**
      * {@inheritdoc}
      */
-    public function getOrderId(): string
+    public function getOrderId()
     {
         return $this->_getData(RefundTransactionInterface::ORDER_ID);
     }
@@ -45,7 +41,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
     /**
      * {@inheritdoc}
      */
-    public function setOrderId(string $orderId)
+    public function setOrderId($orderId)
     {
         return $this->setData(RefundTransactionInterface::ORDER_ID, $orderId);
     }
@@ -53,7 +49,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
     /**
      * {@inheritdoc}
      */
-    public function getRemoteId(): string
+    public function getRemoteId()
     {
         return $this->_getData(RefundTransactionInterface::REMOTE_ID);
     }
@@ -61,7 +57,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
     /**
      * {@inheritdoc}
      */
-    public function setRemoteId(string $remoteId)
+    public function setRemoteId($remoteId)
     {
         return $this->setData(RefundTransactionInterface::REMOTE_ID, $remoteId);
     }
@@ -69,7 +65,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
     /**
      * {@inheritdoc}
      */
-    public function getAmount(): float
+    public function getAmount()
     {
         return $this->_getData(RefundTransactionInterface::AMOUNT);
     }
@@ -77,7 +73,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
     /**
      * {@inheritdoc}
      */
-    public function setAmount(float $amount)
+    public function setAmount($amount)
     {
         return $this->setData(RefundTransactionInterface::AMOUNT, $amount);
     }
@@ -85,7 +81,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
     /**
      * {@inheritdoc}
      */
-    public function getCurrency(): string
+    public function getCurrency()
     {
         return $this->_getData(RefundTransactionInterface::CURRENCY);
     }
@@ -93,7 +89,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
     /**
      * {@inheritdoc}
      */
-    public function setCurrency(string $currency)
+    public function setCurrency($currency)
     {
         return $this->setData(RefundTransactionInterface::CURRENCY, $currency);
     }
@@ -101,7 +97,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
     /**
      * @return string
      */
-    public function getRemoteOutId(): string
+    public function getRemoteOutId()
     {
         return $this->_getData(RefundTransactionInterface::REMOTE_OUT_ID);
     }
@@ -111,7 +107,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
      *
      * @return $this
      */
-    public function setRemoteOutId(string $remoteId)
+    public function setRemoteOutId($remoteId)
     {
         return $this->setData(RefundTransactionInterface::REMOTE_OUT_ID, $remoteId);
     }
@@ -119,7 +115,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
     /**
      * @return bool
      */
-    public function isPartial(): bool
+    public function isPartial()
     {
         return (bool) $this->_getData(RefundTransactionInterface::IS_PARTIAL);
     }
@@ -129,7 +125,7 @@ class RefundTransaction extends AbstractModel implements RefundTransactionInterf
      *
      * @return $this
      */
-    public function setIsPartial(bool $isPartial)
+    public function setIsPartial($isPartial)
     {
         return $this->setData(RefundTransactionInterface::IS_PARTIAL, $isPartial);
     }
